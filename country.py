@@ -1,4 +1,5 @@
 import numpy as np
+import networkx as nx
 #from numba import jit
 
 class Country:
@@ -6,11 +7,19 @@ class Country:
         self.args = args
         self.graph = graph
         self.N = len(graph.nodes)
-
-        self.states = np.array(["S" for g in graph.nodes])
-        self.indexes = np.ndarray(self.N)
-
         self.iter = 0
+
+        # === Init states ===
+        self.states = np.array(["S"]*self.N)
+        self.indexes = np.ndarray(self.N)
+        self.neighs = []
+
+        indexes = nx.get_node_attributes(graph, "index")
+        for name in graph.nodes():
+            neighs = [indexes[neigh] for neigh in graph[name].keys()]
+            self.neighs.append(neighs)
+
+        self.neighs = np.array(self.neighs)
 
     def run(self):
         for i in range(self.args["max_iter"]):

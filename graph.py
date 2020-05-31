@@ -12,10 +12,12 @@ def grid(args):
     graph = nx.Graph()
 
     # === Init nodes ===
+    ind = 0
     for i in range(n):
         for j in range(n):
-            graph.add_node("{},{}".format(i,j),pos = (i,j), name = "{},{}".format(i,j))
-    
+            graph.add_node("{},{}".format(i,j),pos = (i,j),
+                           name = "{},{}".format(i,j), index=ind)
+            ind+1
     # === Init edges ===
     for i in range(n-1):
         for j in range(n-1):
