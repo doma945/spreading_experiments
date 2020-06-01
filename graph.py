@@ -17,7 +17,7 @@ def grid(args):
         for j in range(n):
             graph.add_node("{},{}".format(i,j),pos = (i,j),
                            name = "{},{}".format(i,j), index=ind)
-            ind+1
+            ind+=1
     # === Init edges ===
     for i in range(n-1):
         for j in range(n-1):
@@ -29,7 +29,6 @@ def grid(args):
 
     pos = nx.get_node_attributes(graph, "pos")
     #names = nx.get_node_attributes(graph, "name")
-    b = (0,0,1)
-    nx.draw(graph, pos, node_size =1, node_color = [b for i in range(len(pos))])
-    plt.show()
+    #nx.draw(graph, pos, node_size =1, node_color = [(0,0,1) for i in range(len(pos))])
+    #plt.show()
     return graph

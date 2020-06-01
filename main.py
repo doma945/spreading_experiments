@@ -5,14 +5,15 @@ from graph import get_graph
 from country import Country
 
 args = {
-    "max_iter":10,
-    "beta": 0.37,
-    "I_time": (lambda n: 5*np.ones(n, dtype=np.int32)),
-    "super_I": 0.3,
+    "logfile": "data/d1.csv",
+    "max_iter":200,
+    "beta": 0.15,
+    "I_time": 5,
+    "p_focus": 0.1,
 }
 
 if __name__ == "__main__":
-    graph = get_graph(args={"type":"grid","n":50})
+    graph = get_graph(args={"type":"grid","n":25})
     
     country = Country(args, graph)
     country.run()
