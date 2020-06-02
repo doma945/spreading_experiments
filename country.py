@@ -22,18 +22,20 @@ class Country:
 
         # === Infect some agents ===
         n = 2
-        self.states[40:40+n] = 10
-        self.timers[40:40+n] = args["I_time"]+1
+        inf_nodes = np.array([40,41,65,66, 15,16])
+        self.states[inf_nodes] = 10
+        self.timers[inf_nodes] = args["I_time"]+1
 
     def run(self):
         for i in range(self.args["max_iter"]):
             self.step()
         
+        print('')
         #viewer(self.images)
         plot_log(self.args["logfile"], self.pos, self.neighs)
 
     def step(self):
-        print("Step {}".format(self.iter))
+        print("\rStep {}".format(self.iter), end = '')
 
         p_focus = self.args["p_focus"]
         beta = self.args["beta"]
@@ -61,6 +63,7 @@ class Country:
             adj_list = neigh_arr[slices[ind][0]:slices[ind][1]]
             S_adj_list = adj_list[states[adj_list]==0]
 
+            #if(states[ind]>0 and timers[ind]==I_time-1):
             if(states[ind]>0):
                 # === Choose infected: ===
                 if(states[ind]==10):

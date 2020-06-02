@@ -7,9 +7,9 @@ from country import Country
 args = {
     "logfile": "data/d1.csv",
     "max_iter":200,
-    "beta": 0.15,
+    "beta": 0.0,
     "I_time": 5,
-    "p_focus": 0.1,
+    "p_focus": 0.37,
 }
 
 if __name__ == "__main__":

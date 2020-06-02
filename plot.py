@@ -68,10 +68,11 @@ def plot_log(logfile, pos, neighs):
         color[row==0] = 'b'
         color[row==1] = 'y'
         color[row==10] = 'r'
-        ln = ax.scatter(coords[:,0], coords[:,1], c = color)
+        upd = (data[frame,1:]!=data[frame-1,1:])
+        ln = ax.scatter(coords[:,0][upd], coords[:,1][upd], c = color[upd])
         ax.set_title(frame)
         return ln,
 
-    ani = animation.FuncAnimation(fig, update, frames=range(N),
+    ani = animation.FuncAnimation(fig, update, frames=range(1,N),
                         init_func=init, blit=False, interval=100)
     plt.show()
