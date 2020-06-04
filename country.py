@@ -7,6 +7,12 @@ import matplotlib.pyplot as plt
 from plot import viewer,plot_log
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
+# JIT cannot handle yet with string/char arrays, that's why
+#    I have to use int arrays. The states are:
+# 0 : Suscepted
+# 1 : Infected
+# 10: Super Infected
+
 class Country:
     def __init__(self, args, graph):
         self.iter = 0
@@ -20,7 +26,10 @@ class Country:
         # === Init states ===
         self.init_states()
 
-        # === Infect some agents ===
+        # === Infect some agents in the center ===
+        # IGI
+        # GIG
+        # IGI
         n = int(np.sqrt(self.N))
         c = n//2
         inf_nodes = np.array([n*(c-1)+c-1, n*(c-1)+c, n*(c-1)+c+1, n*c+c-1, n*c+c, n*c+c+1, n*(c+1)+c-1, n*(c+1)+c, n*(c+1)+c+1])
@@ -32,7 +41,6 @@ class Country:
             self.step()
         
         print('')
-        #viewer(self.images)
         plot_log(self.args["logfile"], self.pos, self.neighs, self.args)
 
     def step(self):
@@ -47,7 +55,6 @@ class Country:
         Country.update_neighs(self.states, self.indexes, self.timers,
                               self.neighs, p_super, beta, beta_super, I_time)
 
-        #self.save_plot()
         self.log_csv()
         self.iter+=1
 
