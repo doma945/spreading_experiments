@@ -21,9 +21,10 @@ class Country:
         self.init_states()
 
         # === Infect some agents ===
-        n = 2
-        inf_nodes = np.array([40,41,65,66, 15,16])
-        self.states[inf_nodes] = 10
+        n = int(np.sqrt(self.N))
+        c = n//2
+        inf_nodes = np.array([n*(c-1)+c-1, n*(c-1)+c, n*(c-1)+c+1, n*c+c-1, n*c+c, n*c+c+1, n*(c+1)+c-1, n*(c+1)+c, n*(c+1)+c+1])
+        self.states[inf_nodes] = np.array([10,1,10,1,10,1,10,1,10])
         self.timers[inf_nodes] = args["I_time"]+1
 
     def run(self):
@@ -32,16 +33,19 @@ class Country:
         
         print('')
         #viewer(self.images)
-        plot_log(self.args["logfile"], self.pos, self.neighs)
+        plot_log(self.args["logfile"], self.pos, self.neighs, self.args)
 
     def step(self):
         print("\rStep {}".format(self.iter), end = '')
 
-        p_focus = self.args["p_focus"]
+        p_super = self.args["p_super"]
         beta = self.args["beta"]
+        beta_super = self.args["beta_super"]
+
         I_time = self.args["I_time"]
         # === Infections ===
-        Country.update_neighs(self.states, self.indexes, self.timers, self.neighs, p_focus, beta, I_time)
+        Country.update_neighs(self.states, self.indexes, self.timers,
+                              self.neighs, p_super, beta, beta_super, I_time)
 
         #self.save_plot()
         self.log_csv()
@@ -49,7 +53,7 @@ class Country:
 
 
     @jit(nopython = True)
-    def update_neighs(states, indexes, timers, neighs, p_focus, beta, I_time):
+    def update_neighs(states, indexes, timers, neighs, p_super, beta, beta_super, I_time):
         # 0 : Suscepted
         # 1 : Infected
         # 10: Super Infected
@@ -67,7 +71,9 @@ class Country:
             if(states[ind]>0):
                 # === Choose infected: ===
                 if(states[ind]==10):
-                    infected = S_adj_list
+                    #infected = S_adj_list
+                    new_inf_num = np.random.binomial(S_adj_list.size, beta_super)
+                    infected = np.random.choice(S_adj_list, replace = False, size=new_inf_num)
                 else:
                     new_inf_num = np.random.binomial(S_adj_list.size, beta)
                     infected = np.random.choice(S_adj_list, replace = False, size=new_inf_num)
@@ -76,7 +82,7 @@ class Country:
                 timers[infected] = I_time
 
                 # === Choose super infected ===
-                new_super_inf_num = np.random.binomial(infected.size, p_focus)
+                new_super_inf_num = np.random.binomial(infected.size, p_super)
                 focus = np.random.choice(infected, replace = False, size=new_super_inf_num)
                 states[focus] = -10
 
