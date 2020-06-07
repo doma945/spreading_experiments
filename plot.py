@@ -56,12 +56,12 @@ def plot_log(logfile, pos, neighs, args):
     print("Iters {}".format(N))
 
     row = data[0,1:]
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(1,2)
     color = np.array(['b']*len(coords))
     
-
+    #plt.ion()
     def init():
-        ln = ax.scatter(coords[:,0], coords[:,1], c = color)
+        ln = ax[0].scatter(coords[:,0], coords[:,1], c = color)
         return ln,
 
     def update(frame):
@@ -69,19 +69,28 @@ def plot_log(logfile, pos, neighs, args):
         upd = (data[frame,1:]!=data[frame-1,1:])
         if(frame == 0 ):
             upd = (upd==upd)
+        
         row = data[frame,1:]
         color[row==0] = 'b'
         color[row==1 ] = 'y'
         color[row==10] = 'r'
-        ln = ax.scatter(coords[:,0][upd], coords[:,1][upd], c = color[upd])
-        ax.set_title(frame)
-        return ln,
+        ln = ax[0].scatter(coords[:,0][upd], coords[:,1][upd], c = color[upd])
+        ax[0].set_title(frame)
+
+        ax[1].set_title("Total_Infections")
+        if(frame>0):
+            ln2 = ax[1].plot([frame-1, frame], [np.sum(data[frame-1,1:]>0),np.sum(data[frame,1:]>0)], c='b')
+        else:
+            ln2 = ax[1].plot([0],[0])
+
+        return ln,ln2,
 
     ani = animation.FuncAnimation(fig, update, frames=range(0,N),
                         init_func=init, blit=False, interval=180)
     
     if 0:
         plt.show()
+        #plt.waitforbuttonpress()
 
     if 1:
         Writer = animation.writers['ffmpeg']
@@ -90,3 +99,5 @@ def plot_log(logfile, pos, neighs, args):
         name = "data/{}_graph[{}]--beta[{}]--beta_super_[{}]--I_[{}]--p_super_[{}]<<seed{}>>".format(args["graph"], args["grid_size"], args["beta"], 
                                                                     args["beta_super"], args["I_time"], args["p_super"], args["seed"])
         ani.save('{}.mp4'.format(name), writer=writer)
+
+    plt.close()

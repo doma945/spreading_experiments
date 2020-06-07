@@ -26,6 +26,19 @@ class Country:
         # === Init states ===
         self.init_states()
 
+        # === Infections ===
+        if args["graph"]=="barabasi":
+            self.barabasi_inf(graph)
+        else:
+            self.grid_inf()
+
+    def barabasi_inf(self, graph):
+        ind = np.random.randint(0,self.N)
+        inf_nodes = np.array([node for node in graph.neighbors(ind)])[:10]
+        self.states[inf_nodes] = np.random.choice(np.array([1,10]), inf_nodes.size)
+        self.timers[inf_nodes] = self.args["I_time"]+1
+
+    def grid_inf(self):
         # === Infect some agents in the center ===
         # IGI
         # GIG
@@ -34,7 +47,9 @@ class Country:
         c = n//2
         inf_nodes = np.array([n*(c-1)+c-1, n*(c-1)+c, n*(c-1)+c+1, n*c+c-1, n*c+c, n*c+c+1, n*(c+1)+c-1, n*(c+1)+c, n*(c+1)+c+1])
         self.states[inf_nodes] = np.array([10,1,10,1,10,1,10,1,10])
-        self.timers[inf_nodes] = args["I_time"]+1
+        #self.states[inf_nodes] = np.array([1,10,1,10,1,10,1,10,1])
+        self.timers[inf_nodes] = self.args["I_time"]+1
+
 
     def run(self):
         for i in range(self.args["max_iter"]):

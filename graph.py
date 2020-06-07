@@ -1,12 +1,32 @@
+import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 
 def get_graph(args):
     if args["type"] == "grid":
         return grid(args)
+    elif args["type"] == "barabasi":
+        return barabasi(args)
     else:
         print("Type not understood")
 
+def barabasi(args):
+    n = args["n"]
+    m = int(args["m"])
+
+    graph = nx.barabasi_albert_graph(n,m)
+    pos = nx.spring_layout(graph)
+    nx.set_node_attributes(graph, pos, "pos")
+    for i in range(n):
+        graph.nodes[i]["index"]=i
+        graph.nodes[i]["name"]=i
+
+    #pos = nx.get_node_attributes(graph, "pos")
+    print(graph.nodes[0])
+    nx.draw(graph, pos = pos)
+    plt.show()
+
+    return graph
 def grid(args):
     n = args["n"]
     graph = nx.Graph()
